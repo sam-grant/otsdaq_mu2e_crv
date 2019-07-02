@@ -39,7 +39,7 @@ void ROCCosmicRayVetoInterface::writeROCRegister(uint16_t address, uint16_t data
 }
 
 //==================================================================================================
-int ROCCosmicRayVetoInterface::readROCRegister(uint16_t address)
+uint16_t ROCCosmicRayVetoInterface::readROCRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -59,7 +59,7 @@ void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
 }
 
 //==================================================================================================
-int ROCCosmicRayVetoInterface::readEmulatorRegister(uint16_t address)
+uint16_t ROCCosmicRayVetoInterface::readEmulatorRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC Emulator register: link number " << std::dec
 	            << linkID_ << ", address = " << address << __E__;
