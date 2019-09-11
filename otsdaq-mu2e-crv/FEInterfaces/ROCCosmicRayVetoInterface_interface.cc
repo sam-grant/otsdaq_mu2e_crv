@@ -1,6 +1,6 @@
 #include "otsdaq-mu2e-crv/FEInterfaces/ROCCosmicRayVetoInterface.h"
 
-#include "otsdaq-core/Macros/InterfacePluginMacros.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 
 using namespace ots;
 
