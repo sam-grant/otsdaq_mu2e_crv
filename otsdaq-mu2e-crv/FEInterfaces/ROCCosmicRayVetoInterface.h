@@ -46,6 +46,10 @@ public:
 	virtual int  							readDTCLinkLossCounter	(void) override;
 	virtual void 							resetDTCLinkLossCounter	(void) override;
 
+
+public:
+	void 									DoTheCRV_Dance			(__ARGS__);
+
 	// clang-format on
 };
 

@@ -17,7 +17,16 @@ ROCCosmicRayVetoInterface::ROCCosmicRayVetoInterface(
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
 	__MCOUT_INFO__("ROCCosmicRayVetoInterface instantiated with link: "
-	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+	               << (int)linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+
+	registerFEMacroFunction(
+		"Do the CRV Dance",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&ROCCosmicRayVetoInterface::DoTheCRV_Dance),
+					std::vector<std::string>{"Which Step"},
+					std::vector<std::string>{						
+						"Random Result"},
+					1);  // requiredUserPermissions
 }
 
 //==========================================================================================
@@ -31,7 +40,7 @@ ROCCosmicRayVetoInterface::~ROCCosmicRayVetoInterface(void)
 //==================================================================================================
 void ROCCosmicRayVetoInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
 {
-	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
+	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << (int)linkID_
 	            << ", address = " << address << ", write data = " << data_to_write
 	            << __E__;
 
@@ -52,7 +61,7 @@ void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
                                                       uint16_t data_to_write)
 {
 	__FE_COUT__ << "Calling write ROC Emulator register: link number " << std::dec
-	            << linkID_ << ", address = " << address
+	            << (int)linkID_ << ", address = " << address
 	            << ", write data = " << data_to_write << __E__;
 
 	return;
@@ -62,7 +71,7 @@ void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
 uint16_t ROCCosmicRayVetoInterface::readEmulatorRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC Emulator register: link number " << std::dec
-	            << linkID_ << ", address = " << address << __E__;
+	            << (int)linkID_ << ", address = " << address << __E__;
 
 	return -1;
 }
@@ -175,5 +184,17 @@ void ROCCosmicRayVetoInterface::stop(void) {}
 
 //==============================================================================
 bool ROCCosmicRayVetoInterface::running(void) { return false; }
+
+
+
+
+//========================================================================
+void ROCCosmicRayVetoInterface::DoTheCRV_Dance(__ARGS__)
+{	
+	uint32_t address = __GET_ARG_IN__("Which Step", uint32_t);
+	__FE_COUT__ << "Hello" << __E__;
+	__SET_ARG_OUT__("Random Result",0xA4);
+	
+} //end DoTheCRV_Dance()
 
 DEFINE_OTS_INTERFACE(ROCCosmicRayVetoInterface)
