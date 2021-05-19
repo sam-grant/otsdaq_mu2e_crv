@@ -1,17 +1,4 @@
-include_directories(${MPI_INCLUDE_PATH})
-include_directories(${CMAKE_BINARY_DIR}/artdaq)
-    
-    
+
 simple_plugin(ROCCosmicRayVetoInterface "interface"
-	ROCCore
-	FECore
-	TableCore
-	Macros
-	Configurable
-	ConfigurationInterface
-	WorkLoopManager
-	artdaq-core_Utilities
-	${XDAQ_XERCES-C}
-	${MF_MESSAGELOGGER}
-	pthread
+	otsdaq_mu2e::ROCCore
  )

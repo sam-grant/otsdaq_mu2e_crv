@@ -191,7 +191,7 @@ bool ROCCosmicRayVetoInterface::running(void) { return false; }
 //========================================================================
 void ROCCosmicRayVetoInterface::DoTheCRV_Dance(__ARGS__)
 {	
-	uint32_t address = __GET_ARG_IN__("Which Step", uint32_t);
+//	uint32_t address = __GET_ARG_IN__("Which Step", uint32_t);
 	__FE_COUT__ << "Hello" << __E__;
 	__SET_ARG_OUT__("Random Result",0xA4);
 	
