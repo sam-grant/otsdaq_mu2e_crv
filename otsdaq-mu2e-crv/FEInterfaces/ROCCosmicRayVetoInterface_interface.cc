@@ -19,6 +19,8 @@ ROCCosmicRayVetoInterface::ROCCosmicRayVetoInterface(
 	__MCOUT_INFO__("ROCCosmicRayVetoInterface instantiated with link: "
 	               << (int)linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
 
+    initRoc();
+
 	registerFEMacroFunction(
 		"Do the CRV Dance",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -26,6 +28,14 @@ ROCCosmicRayVetoInterface::ROCCosmicRayVetoInterface(
 					std::vector<std::string>{"Which Step"},
 					std::vector<std::string>{						
 						"Random Result"},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Read Test Counter",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&ROCCosmicRayVetoInterface::ReadTestCouter),
+					std::vector<std::string>{"Test?"},
+					std::vector<std::string>{						
+						"Test Counter"},
 					1);  // requiredUserPermissions
 }
 
@@ -40,21 +50,35 @@ ROCCosmicRayVetoInterface::~ROCCosmicRayVetoInterface(void)
 //==================================================================================================
 void ROCCosmicRayVetoInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
 {
-	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << (int)linkID_
+	__FE_COUT__ << "Calling write CRV-ROC register: link number " << std::dec << (int)linkID_
 	            << ", address = " << address << ", write data = " << data_to_write
 	            << __E__;
 
+    roc_.writeRegister(address, data_to_write);
+	//thisDTC_->WriteROCRegister(linkID_, address, data_to_write,
+	//							false, 0 //requestAck, ack_tmo_ms
+	//							);
+
 	return;
+}
+
+void ROCCosmicRayVetoInterface::universalRead(char* address, char* readValue) {
+	__FE_COUT__ << "CRV ROC universalRead: ";
+	uint16_t data = roc_.readRegister(*address);
+	__FE_COUT__ << data << __E__;
+	readValue[0] = 0x12;
+	readValue[1] = 0x34;
 }
 
 //==================================================================================================
 uint16_t ROCCosmicRayVetoInterface::readROCRegister(uint16_t address)
 {
-	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
+	__FE_COUT__ << "Calling read CRV ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
 
-	return -1;
-}
+        return roc_.readRegister(address);
+		//return thisDTC_->ReadROCRegister(linkID_, address, tmo_ms_);
+} 
 
 //============================================================================================
 void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
@@ -100,9 +124,20 @@ void ROCCosmicRayVetoInterface::resetDTCLinkLossCounter()
 }
 
 //==================================================================================================
+void ROCCosmicRayVetoInterface::initRoc() {
+	roc_.init(thisDTC_, linkID_, tmo_ms_);
+}
+
+//==================================================================================================
 void ROCCosmicRayVetoInterface::configure(void) try
 {
-	__MCOUT_INFO__(".... do nothing for STM ROC... ");
+	//__MCOUT_INFO__(".... do nothing for CRV ROC... " << __E__);
+	__FE_COUT__ << ".... do almost nothing for CRV ROC... " << __E__;
+	configureROCDCS(); // used in config of the base class
+	initRoc(); // load new settings to ROC
+
+	//SetUBunchOffset();
+	//roc 
 
 	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
 	// this->writeRegister(0,1);
@@ -187,7 +222,6 @@ bool ROCCosmicRayVetoInterface::running(void) { return false; }
 
 
 
-
 //========================================================================
 void ROCCosmicRayVetoInterface::DoTheCRV_Dance(__ARGS__)
 {	
@@ -196,5 +230,11 @@ void ROCCosmicRayVetoInterface::DoTheCRV_Dance(__ARGS__)
 	__SET_ARG_OUT__("Random Result",0xA4);
 	
 } //end DoTheCRV_Dance()
+
+void ROCCosmicRayVetoInterface::ReadTestCouter(__ARGS__)
+{
+	__FE_COUT__ << "CRV ROC ReadTestCouter" << __E__;
+	__SET_ARG_OUT__("Test Counter", roc_.ReadTestCounter());
+}
 
 DEFINE_OTS_INTERFACE(ROCCosmicRayVetoInterface)

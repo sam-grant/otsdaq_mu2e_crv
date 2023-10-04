@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>   
+        <script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>     
+        <script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+        <script type="text/JavaScript" src="/WebPath/js/js_lib/SimpleContextMenu.js"></script>
+        <script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>       
+ 
+        <meta charset="utf-8">
+        <title>CRV VST</title>
+
+        <script>
+        function init() {
+            Debug.log("init CRV VST Page", {"DEBUG_PRIORITY": 4 })
+            var div0 = document.getElementById("demo")
+            Debug.logv({div0},{"DEBUG_PRIORITY": 4 })
+
+            /// Tooltip ///
+            DesktopContent.setWindowTooltip("work in progress! ask a developer for help!")
+
+        }
+
+        function info() {
+            Debug.info("this is an info")
+        }
+
+        function test() {
+        }
+
+
+	var _contextMenuItems = [
+							 "Option A",
+							 "Option B",
+							 "Obtion C"];
+	var _contextMenuItemHandlers = [];
+	_contextMenuItemHandlers.push(crvMenuHandlerA);
+	_contextMenuItemHandlers.push(crvMenuHandlerB);
+
+	function crvCreateMenu(event) {
+		SimpleContextMenu.createMenu(
+				_contextMenuItems,
+				_contextMenuItemHandlers,
+				"mySimpleMenu",					//element ID
+				event.pageX-1,event.pageY-1, 	//top left position
+				"rgb(220, 187, 165)", 			//primary color
+				"rgb(130, 51, 51)"				//secondary color
+				);
+	}
+	
+	function crvMenuHandlerA(event,index) {
+		Debug.log("myHandler event=" + event,{"DEBUG_PRIORITY": 4 });
+		Debug.log("myHandler index=" + index,{"DEBUG_PRIORITY": 4 });
+		Debug.log("myHandler menuitem=" + _contextMenuItems[index],{"DEBUG_PRIORITY": 4 });
+	}
+	function crvMenuHandlerB(event,index) {
+		Debug.log("myHandler event=" + event,{"DEBUG_PRIORITY": 4 });
+		Debug.log("myHandler index=" + index,{"DEBUG_PRIORITY": 4 });
+		Debug.log("myHandler menuitem=" + _contextMenuItems[index],{"DEBUG_PRIORITY": 4 });
+	}
+
+        function crvConfig() {
+             ConfigurationAPI.init()
+             console.log(ConfigurationAPI)
+
+        }
+
+        </script>
+
+
+        <!--<link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>-->
+    </head>
+    <body onload='//init() called by DesktopContent.js'>
+        <h1>CRV VST at Wideband</h1>
+        <button onclick="info()">Info pop up</button>
+        <div id="demo">Test Div </div>
+        <button onclick="init()">Init</button>
+        <button onmousedown="crvCreateMenu(event)">Menu</button>
+        <br />
+        <button onclick="crvConfig()">show crv config</button>
+       
+    </body>
+</html>
