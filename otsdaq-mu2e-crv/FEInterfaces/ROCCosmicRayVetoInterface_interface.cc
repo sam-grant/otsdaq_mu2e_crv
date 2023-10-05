@@ -37,6 +37,27 @@ ROCCosmicRayVetoInterface::ROCCosmicRayVetoInterface(
 					std::vector<std::string>{						
 						"Test Counter"},
 					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Set Active Port",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&ROCCosmicRayVetoInterface::SetActivePort),
+					std::vector<std::string>{"port"},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Get Active Port",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&ROCCosmicRayVetoInterface::GetActivePort),
+					std::vector<std::string>{},
+					std::vector<std::string>{"Active Port"},
+					255);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Get Active Ports",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&ROCCosmicRayVetoInterface::GetActivePorts),
+					std::vector<std::string>{},
+					std::vector<std::string>{"Active Ports"},
+					255);  // requiredUserPermissions
 }
 
 //==========================================================================================
@@ -135,6 +156,27 @@ void ROCCosmicRayVetoInterface::configure(void) try
 	__FE_COUT__ << ".... do almost nothing for CRV ROC... " << __E__;
 	configureROCDCS(); // used in config of the base class
 	initRoc(); // load new settings to ROC
+
+	bool doConfigureFEBs = true;
+	try
+	{
+	 	doConfigureFEBs = Configurable::getSelfNode()
+	 		                .getNode("EnableFEBConfigureStep")
+	 		                .getValue<bool>();
+	}
+	catch(...)
+	{
+	}  // ignore missing field
+	if(doConfigureFEBs) 
+	{
+		//for(auto& feb : rocs_) 
+		//{   
+		//	 feb.second->configure();
+		//}
+	} else {
+		__FE_COUT_INFO__ << "Skip FEB(s) configuration." << __E__;
+	}
+
 
 	//SetUBunchOffset();
 	//roc 
@@ -235,6 +277,25 @@ void ROCCosmicRayVetoInterface::ReadTestCouter(__ARGS__)
 {
 	__FE_COUT__ << "CRV ROC ReadTestCouter" << __E__;
 	__SET_ARG_OUT__("Test Counter", roc_.ReadTestCounter());
+}
+
+void ROCCosmicRayVetoInterface::SetActivePort(__ARGS__)
+{
+	uint16_t port  = __GET_ARG_IN__("port", uint16_t);
+	__FE_COUT__ << "CRV ROC SetActivePort: " << port << __E__;
+	roc_.SetActivePort(port, true);
+}
+
+void ROCCosmicRayVetoInterface::GetActivePort(__ARGS__)
+{
+	__FE_COUT__ << "CRV ROC GetActivePort" << __E__;
+	__SET_ARG_OUT__("Active Port", roc_.GetActivePort());
+}
+
+void ROCCosmicRayVetoInterface::GetActivePorts(__ARGS__)
+{
+	__FE_COUT__ << "CRV ROC GetActivePorts" << __E__;
+	__SET_ARG_OUT__("Active Ports", roc_.GetActivePorts());
 }
 
 DEFINE_OTS_INTERFACE(ROCCosmicRayVetoInterface)

@@ -8,7 +8,12 @@ namespace CRVLib {
 enum ROC_Register : uint16_t
 {
 	DesignVersion = 0x0000,
-    TestCounter   = 0x0035
+    ActvRegAddrHi = 0x0008,
+    ActvRegAddrLo = 0x0009,
+    TestCounter   = 0x0035,
+
+    // uC functions
+    LP            = 0x8000 
 };
 } // namespace CRVLib
 

@@ -57,7 +57,9 @@ private:
 public:
 	void 									DoTheCRV_Dance			(__ARGS__);
 	void 									ReadTestCouter			(__ARGS__);
-
+	void 									SetActivePort			(__ARGS__);
+	void 									GetActivePort			(__ARGS__);
+	void 									GetActivePorts			(__ARGS__);
 	// clang-format on
 };
 
