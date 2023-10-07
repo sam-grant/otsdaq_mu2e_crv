@@ -5,7 +5,8 @@
 #include <string>
 #include "dtcInterfaceLib/DTC.h"
 #include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
-#include "otsdaq-mu2e-crv/crvInterfaceLib/CRVROC.h"
+#include "otsdaq-mu2e-crv/crvInterfaceLib/CRVROC.h" // inheritance would probably be more in the spirit of the otsdaq code 
+#include "otsdaq-mu2e-crv/crvInterfaceLib/CRVFEB.h" //
 
 namespace ots
 {
@@ -27,7 +28,7 @@ public:
 	void 									resume					(void) override;
 	void 									start					(std::string runNumber) override;
 	void 									stop					(void) override;
-	bool 									running					(void) override;
+	bool 									running					(void) override;	
 
 	// write and read to registers
 	virtual void 							writeROCRegister		(uint16_t address, uint16_t data_to_write) override;
@@ -52,7 +53,10 @@ public:
 
 private:
 	CRVLib::CRVROC                       	roc_; 
+	CRVLib::CRVFEB                       	feb_; 
 	void									initRoc					(void);
+	void									initFeb					(void);
+	void                                    configureHardware(bool dryRun = false);
 
 public:
 	void 									DoTheCRV_Dance			(__ARGS__);
@@ -60,6 +64,11 @@ public:
 	void 									SetActivePort			(__ARGS__);
 	void 									GetActivePort			(__ARGS__);
 	void 									GetActivePorts			(__ARGS__);
+	void 									SetBias                 (__ARGS__);
+	void 									SetBiasOff              (__ARGS__);
+	void 									ConfigHardwareMacro     (__ARGS__);
+	void 									PowerResetPort          (__ARGS__);
+	void 									ResetUc                 (__ARGS__);
 	// clang-format on
 };
 
