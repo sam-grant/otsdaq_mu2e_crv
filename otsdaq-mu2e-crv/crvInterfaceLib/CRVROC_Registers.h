@@ -16,7 +16,7 @@ enum ROC_Register : uint16_t
     PLLPDnAddr      = 0x019,
     TestCounter     = 0x035,
     LinkCSRAddr     = 0x027,
-    HrtBtOffsetAd   = 0x038,
+    HrtBtOffsetAd   = 0x081,
 
     // FPGA 1, 2, 3
     BROADCAST       = 0x300,

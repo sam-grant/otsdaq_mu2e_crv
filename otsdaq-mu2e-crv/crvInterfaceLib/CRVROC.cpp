@@ -31,11 +31,11 @@ uint16_t CRVROC::readRegister(uint16_t address)
     
     for (unsigned int  attempt = 1; attempt <= maxAttempts; ++attempt) {
         try {
-            thisDTC_->GetDevice()->init(thisDTC_->ReadSimMode(), //simMode
-                                    0, // dtc, 
-                                    "", //simMemoryFile, 
-                                    thisDTC_->GetDevice()->getDeviceUID() // uid
-                                    );
+            //thisDTC_->GetDevice()->init(thisDTC_->ReadSimMode(), //simMode
+            //                        0, // dtc, 
+            //                        "", //simMemoryFile, 
+            //                        thisDTC_->GetDevice()->getDeviceUID() // uid
+            //                        );
                            
             return thisDTC_->ReadROCRegister(linkID_, address, tmo_ms_); // 
             break;

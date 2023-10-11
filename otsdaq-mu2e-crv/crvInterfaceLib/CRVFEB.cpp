@@ -25,12 +25,33 @@ void CRVFEB::init(DTCLib::DTC* thisDTC, DTCLib::DTC_Link_ID linkID, unsigned int
 //=========================================================================================
 uint16_t CRVFEB::readRegister(uint16_t address)
 {
-    thisDTC_->GetDevice()->init(thisDTC_->ReadSimMode(), //simMode
-                                0, // dtc, 
-                                "", //simMemoryFile, 
-                                thisDTC_->GetDevice()->getDeviceUID() // uid
-                                );
-    return thisDTC_->ReadROCRegister(linkID_, address|0x1000, tmo_ms_);
+
+    const unsigned int maxAttempts = 10;
+    unsigned int wait = 100;
+    
+    for (unsigned int  attempt = 1; attempt <= maxAttempts; ++attempt) {
+        try {
+            //thisDTC_->GetDevice()->init(thisDTC_->ReadSimMode(), //simMode
+            //                        0, // dtc, 
+            //                        "", //simMemoryFile, 
+            //                        thisDTC_->GetDevice()->getDeviceUID() // uid
+            //                        );
+            return thisDTC_->ReadROCRegister(linkID_, address|0x1000, tmo_ms_);
+            break;
+        } catch(const std::exception& e) {
+            std::cerr << "Attempt " << attempt << ": " << e.what();;
+            if (attempt < maxAttempts) {
+                std::cerr << " Retrying after " << wait << " us" << std::endl;
+                usleep(wait);
+                wait *=2;
+            } else {    
+                std::cerr << " Maximum attempts reached. Exiting." << std::endl;
+                throw e;
+                break;
+            }
+        }
+    }
+    return -1;
 }
 
 //=========================================================================================
