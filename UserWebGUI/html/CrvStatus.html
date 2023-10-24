@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <link rel="stylesheet" type="text/css" href="/WebPath/css/ConfigurationGUI.css">
+        <link rel="stylesheet" type="text/css" href="/WebPath/css/ConfigurationAPI.css">
+        <script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>   
+        <script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>     
+        <script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+        <script type="text/JavaScript" src="/WebPath/js/js_lib/SimpleContextMenu.js"></script>
+        <script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>       
+ 
+        <style type="text/css">
+            .status-header {
+                font-weight: bold;
+                cursor: pointer;
+                /*background-color: #e0e0e0;
+                padding: 5px;
+                margin: 5px 0;*/
+            }
+            
+            .status-header::before {
+                content: url('/WebPath/images/windowContentImages/ConfigurationGUI-expandTree.png');
+                display: inline;
+                margin-right:5px;
+            }
+
+            .status-node {
+                   padding-left:20px;
+            }
+
+            .status-content {
+                display: block;
+                /*padding-left: 20px;*/
+                margin-left: 4px;   
+                border-left: 1px solid rgb(181, 170, 210);
+            }
+
+            .status-value::before {
+                content: "  ";
+                border-bottom: 1px solid rgb(44, 44, 187);
+                border-left: 1px solid rgb(44, 44, 187);
+                width: 20px;
+                height:13px;
+                display:inline-block;
+                transform: translateY(-5px);
+                margin-right:3px;
+            }
+
+            .status-value-name {
+                display: inline-block;
+                width: 360px;
+            }
+            .status-value-value {
+                display: inline-block;
+                width: 100px;
+            }
+            .status-value-time {
+                display: inline-block;
+                width: 100px;
+            }
+
+            .connection {
+                display: inline-block;
+                width: 100px;
+                /*height:40px;*/
+                vertical-align: top;
+                text-align: center;
+                border: 1px solid black;
+                border-radius : 3px;
+            }
+
+            .connection.disconnected {
+                background-color: #ff4444;
+            }
+
+            .connection.connected {
+                background-color: #44aa44;
+            }
+            /*[status-level="1"] > .status-header {
+                padding-left: 10px;
+            }
+
+            [status-level="2"] > .status-header {
+                padding-left: 30px;
+            }
+
+            [status-level="3"] > .status-header {
+                padding-left: 50px;
+            }*/
+
+        </style>
+	
+
+        <meta charset="utf-8">
+        <title>CRV Status</title>
+
+        <script>
+            var connections = {"connection-slow":2006,
+                               "connection-boardreader":2007,
+                               "connection-eventbuilder":2008,
+                               "connection-logger":2009}
+            for(let id in connections) {
+                const socket = new WebSocket('ws://localhost:'+connections[id]);
+                socket.addEventListener('message', handleMessage);  
+
+                socket.addEventListener('open', (event) => {
+                    document.getElementById(id).classList.add("connected");
+                    document.getElementById(id).classList.remove("error");
+                    document.getElementById(id).classList.remove("disconnected");
+                });
+                socket.addEventListener('close', (event) => {
+                    document.getElementById(id).classList.remove("connected");
+                    document.getElementById(id).classList.remove("error");
+                    document.getElementById(id).classList.add("disconnected");
+                    if (event.wasClean) {
+                        console.log(`Closed cleanly, code=${event.code}, reason=${event.reason}`);
+                    } else {
+                        console.log('Connection died');
+                    }
+                });
+                socket.addEventListener('error', (error) => {
+                    //document.getElementById(id).innerHTML = "Slow<br>"+error
+                    document.getElementById("connection-message").innerHTML = error
+                    document.getElementById(id).classList.remove("connected");
+                    document.getElementById(id).classList.remove("disconnected");
+                    document.getElementById(id).classList.add("error");
+                    console.error('WebSocket Error:', error);
+                });
+            }
+
+        function init() {
+            Debug.log("init CRV Status Page", {"DEBUG_PRIORITY": 4 })
+
+            crvConfig();
+            var div0 = document.getElementById("demo")
+            Debug.logv({div0},{"DEBUG_PRIORITY": 4 })
+
+            /// Tooltip ///
+            DesktopContent.setWindowTooltip("work in progress! ask a developer for help!")
+            //crvConfig();
+        }
+
+        function handleMessage(event) {
+            console.log('Received:', event.data);
+            const data_ = event.data.split(" ")
+            const key   = data_[0]
+            const value = data_[1]
+            const time  = data_[2]
+            const dateObj = new Date(time * 1000);
+
+            let node = getOrCreateNode(key)
+            // check if structure is already present
+            if(!node.querySelector('.status-value-name')) { // if present, create
+                let div_      = document.createElement("div")
+                let name_div  = document.createElement("div")
+                let value_div = document.createElement("div")
+                let time_div  = document.createElement("div")
+                div_.style = "display:inline-block;"
+                name_div.className  = "status-value-name"
+                name_div.innerHTML   = node.getAttribute("name")
+                value_div.className = "status-value-value"
+                time_div.className   = "status-value-time"
+                div_.appendChild(name_div)
+                div_.appendChild(value_div)
+                div_.appendChild(time_div)
+                node.appendChild(div_)    
+            }
+            node.querySelector('.status-value-value').innerHTML  = value
+            node.querySelector('.status-value-time').innerHTML   = dateObj.toLocaleTimeString('en-US');
+        }
+
+        function getOrCreateNode(name) {
+            // neglect the fist part, currently artdaq., split everything by : instead of .
+            const name_ = name.split(".").slice(1).join(':');
+            let node_ =  document.getElementById(name_)
+            if(node_) return node_;
+            
+            // create the node if not yet present
+            const levels_ = name_.split(":")
+            node = document.getElementById("status")
+            for (let i = 1; i <= levels_.length; i++) {
+                let id = levels_.slice(0,i).join(":")
+                node_ = document.getElementById(id)
+                if(node_) {
+                    node = node_ // follow exisitng structure
+                } else {
+                    let div_ = document.createElement("div")
+                    div_.id = id
+                    // check if we reached a value node
+                    if(i == levels_.length) { //value
+                        div_.className = "status-value"
+                        div_.setAttribute("name", levels_[i-1]) // name of the value, not unique
+                        node.querySelector('.status-content').appendChild(div_) // add at the end
+                    } else {
+                        div_.className = "status-node"
+                        div_.setAttribute("status-level", i)
+                        //div_.innerHTML = levels_[i-1]+"<br/>"
+                        let header_ = document.createElement("div")
+                        header_.className = "status-header"
+                        header_.setAttribute("onclick","toggle(this)")
+                        header_.innerHTML = levels_[i-1]
+                        let content_ = document.createElement("div")
+                        content_.className = "status-content"
+                        div_.appendChild(header_)
+                        div_.appendChild(content_)
+
+                        let node_content_ = node.querySelector('.status-content')
+                        let ref_node = node_content_.querySelector('.status-node')
+                        if(!ref_node) { // if there is no other status note yet, let's add at the front
+                            //console.log(node_content_)
+                            node_content_.insertBefore(div_, node_content_.firstChild)
+                        } else {
+                            if(ref_node.nextSibling != null) {
+                                node_content_.insertBefore(div_, ref_node.nextSibling)
+                            } else { // if there is no next sibbling we can just add it at the end
+                                node_content_.appendChild(div_)
+                            }
+                        }
+                    }
+                    node = div_
+                }
+            }
+            return document.getElementById(name_) // this exists now
+        }    
+
+        function toggle(el) {
+            let content_ = el.nextSibling
+            if(content_) {
+                if (content_.style.display === 'none') {
+                    content_.style.display = 'block';
+                } else {
+                    content_.style.display = 'none';
+                }
+            }
+        }
+        </script>
+
+
+    </head>
+    <body onload='//init() called by DesktopContent.js'>
+        <h1>CRV Teststand at Wideband</h1>
+
+        <!--<h2 id="title">Metric Managers</h2>-->
+        <div> Metric Managers
+            <div id="connection-slow" class="connection disconnected">Slow </div>
+            <div id="connection-boardreader" class="connection disconnected">Boardreader</div>
+            <div id="connection-eventbuilder" class="connection disconnected">Builder</div>
+            <div id="connection-logger" class="connection disconnected">Logger</div>
+            <div id="connection-message" style="display:none;"></div>
+        </div>
+        <div class="status-node" id="status">
+            <div class="status-header" onclick="toggle(this)">Mu2e</div>
+            <div class="status-content"></div>
+        <div>
+    </body>
+</html>
