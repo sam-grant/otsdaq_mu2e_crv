@@ -37,25 +37,6 @@ ROCCosmicRayVetoInterface::~ROCCosmicRayVetoInterface(void)
 	__COUT__ << FEVInterface::interfaceUID_ << " Destructor" << __E__;
 }
 
-//==================================================================================================
-void ROCCosmicRayVetoInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
-{
-	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << (int)linkID_
-	            << ", address = " << address << ", write data = " << data_to_write
-	            << __E__;
-
-	return;
-}
-
-//==================================================================================================
-uint16_t ROCCosmicRayVetoInterface::readROCRegister(uint16_t address)
-{
-	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
-	            << ", address = " << address << __E__;
-
-	return -1;
-}
-
 //============================================================================================
 void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
                                                       uint16_t data_to_write)
@@ -74,29 +55,6 @@ uint16_t ROCCosmicRayVetoInterface::readEmulatorRegister(uint16_t address)
 	            << (int)linkID_ << ", address = " << address << __E__;
 
 	return -1;
-}
-
-//==================================================================================================
-int ROCCosmicRayVetoInterface::readTimestamp() { return this->readRegister(12); }
-
-//==================================================================================================
-void ROCCosmicRayVetoInterface::writeDelay(uint16_t delay)
-{
-	this->writeRegister(21, delay);
-	return;
-}
-
-//==================================================================================================
-int ROCCosmicRayVetoInterface::readDelay() { return this->readRegister(7); }
-
-//==================================================================================================
-int ROCCosmicRayVetoInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
-
-//==================================================================================================
-void ROCCosmicRayVetoInterface::resetDTCLinkLossCounter()
-{
-	this->writeRegister(24, 0x1);
-	return;
 }
 
 //==================================================================================================
