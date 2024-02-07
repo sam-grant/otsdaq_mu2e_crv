@@ -1,5 +1,4 @@
 #include "otsdaq-mu2e-crv/FEInterfaces/ROCCosmicRayVetoInterface.h"
-
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 
 using namespace ots;
@@ -105,44 +104,46 @@ ROCCosmicRayVetoInterface::~ROCCosmicRayVetoInterface(void)
 	__COUT__ << FEVInterface::interfaceUID_ << " Destructor" << __E__;
 }
 
-//==================================================================================================
-void ROCCosmicRayVetoInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
-{
-	__FE_COUT__ << "Calling write CRV-ROC register: link number " << std::dec << (int)linkID_
-	            << ", address = " << address << ", write data = " << data_to_write
-	            << __E__;
+// //==================================================================================================
+// void ROCCosmicRayVetoInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
+// {
+// 	__FE_COUT__ << "Calling write CRV-ROC register: link number " << std::dec << (int)linkID_
+// 	            << ", address = " << address << ", write data = " << data_to_write
+// 	            << __E__;
 
-    roc_.writeRegister(address, data_to_write);
-	//thisDTC_->WriteROCRegister(linkID_, address, data_to_write,
-	//							false, 0 //requestAck, ack_tmo_ms
-	//							);
+//     roc_.writeRegister(address, data_to_write);
+// 	//thisDTC_->WriteROCRegister(linkID_, address, data_to_write,
+// 	//							false, 0 //requestAck, ack_tmo_ms
+// 	//							);
 
-	return;
-}
+// 	return;
+// }
 
-void ROCCosmicRayVetoInterface::universalRead(char* address, char* readValue) {
-	__FE_COUT__ << "CRV ROC universalRead: ";
-	uint16_t data = roc_.readRegister(*address);
-	__FE_COUT__ << data << __E__;
-	readValue[0] = 0x12;
-	readValue[1] = 0x34;
-}
+// //==================================================================================================
+// void ROCCosmicRayVetoInterface::universalRead(char* address, char* readValue) 
+// {
+// 	__FE_COUT__ << "CRV ROC universalRead: ";
+// 	uint16_t data = roc_.readRegister(*address);
+// 	__FE_COUT__ << data << __E__;
+// 	readValue[0] = 0x12;
+// 	readValue[1] = 0x34;
+// }
 
-//==================================================================================================
-uint16_t ROCCosmicRayVetoInterface::readROCRegister(uint16_t address)
-{
-	__FE_COUT__ << "Calling read CRV ROC register: link number " << std::dec << linkID_
-	            << ", address = " << address << __E__;
+// //==================================================================================================
+// uint16_t ROCCosmicRayVetoInterface::readROCRegister(uint16_t address)
+// {
+// 	__FE_COUT__ << "Calling read CRV ROC register: link number " << std::dec << linkID_
+// 	            << ", address = " << address << std::hex << " 0x" << address << __E__;
 
-        return roc_.readRegister(address);
-		//return thisDTC_->ReadROCRegister(linkID_, address, tmo_ms_);
-} 
+// 	return roc_.readRegister(address);
+// 	//return thisDTC_->ReadROCRegister(linkID_, address, tmo_ms_);
+// } 
 
 //============================================================================================
 void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
                                                       uint16_t data_to_write)
 {
-	__FE_COUT__ << "Calling write ROC Emulator register: link number " << std::dec
+	__FE_COUT__ << "Calling write CRV ROC Emulator register: link number " << std::dec
 	            << (int)linkID_ << ", address = " << address
 	            << ", write data = " << data_to_write << __E__;
 
@@ -152,7 +153,7 @@ void ROCCosmicRayVetoInterface::writeEmulatorRegister(uint16_t address,
 //==================================================================================================
 uint16_t ROCCosmicRayVetoInterface::readEmulatorRegister(uint16_t address)
 {
-	__FE_COUT__ << "Calling read ROC Emulator register: link number " << std::dec
+	__FE_COUT__ << "Calling read CRV ROC Emulator register: link number " << std::dec
 	            << (int)linkID_ << ", address = " << address << __E__;
 
 	return -1;
