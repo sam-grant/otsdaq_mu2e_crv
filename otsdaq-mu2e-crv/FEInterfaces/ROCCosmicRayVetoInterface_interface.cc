@@ -17,8 +17,8 @@ ROCCosmicRayVetoInterface::ROCCosmicRayVetoInterface(
 {
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
-	__MCOUT_INFO__("ROCCosmicRayVetoInterface instantiated with link: "
-	               << (int)linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+	__COUT_INFO__ << "ROCCosmicRayVetoInterface instantiated with link: "
+	               << (int)linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	registerFEMacroFunction(
 		"Do the CRV Dance",
@@ -179,19 +179,19 @@ uint16_t ROCCosmicRayVetoInterface::readEmulatorRegister(uint16_t address)
 //==================================================================================================
 void ROCCosmicRayVetoInterface::configure(void) try
 {
-	__MCOUT_INFO__(".... do nothing for CRV ROC yet ... ");
+	__COUT_INFO__ << ".... do nothing for CRV ROC yet ... " << __E__;
 
-	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
+	// __COUT_INFO__ << "......... Clear DCS FIFOs" << __E__;
 }
 catch(const std::runtime_error& e)
 {
-	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
+	__FE_COUT__ << "Error caught: " << e.what() << __E__;
 	throw;
 }
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
-	__FE_MOUT__ << ss.str();
+	__FE_COUT__ << ss.str();
 	__FE_SS_THROW__;
 }
 
